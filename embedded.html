@@ -22,7 +22,6 @@
 
 							<!-- Header -->
 								<header id="header">
-									<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 									<a href="index.html" class="logo"><strong>Follow Jietang</strong> with:</a>
 									<ul class="icons">
 										<li><a href="mailto:alvin.tang6@gmail.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
@@ -84,28 +83,26 @@
 									<p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fersapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique lorem ipsum dolor.</p>
 									
 
+
 								</section>
+								<head>
+    
+							    <script src='https://unpkg.com/valine/dist/Valine.min.js'></script>
+								</head>
 
+							    <div id="vcomments"></div>
+							    <script>
+							        new Valine({
+							            el: '#vcomments',
+							            appId: 'c0JFUTW7HfoIsEKI0cc0rMU1-gzGzoHsz',
+							            appKey: '2PqF7zsnpVGMb2KbvKrffE6o'
+							        })
+							    </script>
+							</div>
 						</div>
-					</div>
-								<div class="card valine-card" data-aos="fade-up">
-								    <div id="vcomments" class="card-content"></div>
-								</div>
+								
 
-								<script src="/libs/valine/av-min.js"></script>
-								<script src="/libs/valine/Valine.min.js"></script>
-								<!-- <link rel="stylesheet" type="text/css" href="/libs//libs/jQuery-emoji/dist/css/jquery.emoji.css">
-								<script src="/libs//libs/jQuery-emoji/dist/js/jquery.emoji.min.js"></script>
-								<script src="/libs//libs/jQuery-emoji/dist/js/emoji.list.js"></script> -->
-								<script>
-								    new Valine({
-								        el: '#vcomments',
-								        appId: 'c0JFUTW7HfoIsEKI0cc0rMU1-gzGzoHsz',
-								        appKey: '2PqF7zsnpVGMb2KbvKrffE6o',
-								        placeholder: 'just go go',
-
-								    });
-								</script>
+								
 								
 								
 
