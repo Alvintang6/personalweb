@@ -1,4 +1,4 @@
-<!-- Sidebar -->
+<!-- Sidebar -->{% include base.html %}
 					<div id="sidebar">
 						<div class="inner">
 
@@ -15,18 +15,28 @@
 										<h2>Menu</h2>
 									</header>
 									<ul>
-										<li><a href="index.html">About me</a></li>
+										<li><a href="{{base}}/index.html">About me</a></li>
 										<li><a href="generic.html">Generic</a></li>
-										<li><a href="elements.html">Elements</a></li>
+										{% for post in site.posts %}
+										{% if  post.topics  %}
+
 										<li>
-											<span class="opener">Tech blogs</span>
+											<a href="{{post.url}}">{{post.topics}}</a><span class="opener"></span>
 											<ul>
-												<li><a href="#">Robotics</a></li>
-												<li><a href="embedded.html">Embedded linux</a></li>
-												<li><a href="#">STM32 MCU</a></li>
+												{% for tag in site.tags %}
+												{% capture tag_name %}{{ tag | first }}{% endcapture %}
+												{% if post.topics == tag_name %}
+												{% for post2 in site.tags[tag_name] %}
+												<li><a href="{{post2.url}}">{{post2.title}}</a></li>
+												{% endfor %}
+												{% endif %}
+												{% endfor %}
 												<!--<li><a href="#">Feugiat Veroeros</a></li> -->
 											</ul>
 										</li>
+										
+										{% endif %}
+										{% endfor %}
 										<!--<li><a href="elements.html">Elements</a></li>-->
 										<!--<li><a href="elements.html">Elements</a></li>-->
 										<li>
@@ -39,7 +49,6 @@
 												<li><a href="#">Beijing</a></li>
 											</ul>
 										</li>
-										<li><a href="elements.html">Elements</a></li>
 										
 									</ul>
 								</nav>

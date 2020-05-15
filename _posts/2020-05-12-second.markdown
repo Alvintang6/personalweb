@@ -1,8 +1,8 @@
 ---
 layout: tech_post
-title: "First robotics"
+title:  "Robotics Page!"
 date:   2020-05-12 17:51:36 -0400
 categories: jekyll update
-tags: Robotics
+tags: Robotics Mcu
 ---
-First robotics
+Second post

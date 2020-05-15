@@ -17,13 +17,15 @@
 									<ul>
 										<li><a href="index.html">About me</a></li>
 										<li><a href="generic.html">Generic</a></li>
-										<li><a href="elements.html">Elements</a></li>
 										<li>
-											<span class="opener">Tech blogs</span>
+											<span class="opener"> Tech blogs</span>
 											<ul>
-												<li><a href="#">Robotics</a></li>
-												<li><a href="embedded.html">Embedded linux</a></li>
-												<li><a href="#">STM32 MCU</a></li>
+												{% for post in site.posts %}
+												{% if  post.topics  %}
+												<li><a href="{{post.url}}">{{post.topics}}</a></li>
+												{% endif %}
+												
+												 {% endfor %}
 												<!--<li><a href="#">Feugiat Veroeros</a></li> -->
 											</ul>
 										</li>
