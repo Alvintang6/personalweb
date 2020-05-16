@@ -15,31 +15,8 @@
 										<h2>Menu</h2>
 									</header>
 									<ul>
-										<li><a href="{{base}}/index.html">About me</a></li>
-										<li><a href="generic.html">Generic</a></li>
-										{% for post in site.posts %}
-										{% if  post.topics  %}
-
-										<li>
-											<a href="{{post.url}}">{{post.topics}}</a><span class="opener"></span>
-											<ul>
-												{% for tag in site.tags %}
-												{% capture tag_name %}{{ tag | first }}{% endcapture %}
-												{% if post.topics == tag_name %}
-												{% for post2 in site.tags[tag_name] %}
-												<li><a href="{{post2.url}}">{{post2.title}}</a></li>
-												{% endfor %}
-												{% endif %}
-												{% endfor %}
-												<!--<li><a href="#">Feugiat Veroeros</a></li> -->
-											</ul>
-										</li>
-										
-										{% endif %}
-										{% endfor %}
-										<!--<li><a href="elements.html">Elements</a></li>-->
-										<!--<li><a href="elements.html">Elements</a></li>-->
-										<li>
+									<li><a href="{{base}}/index.html">About me</a></li>
+									<li>
 											<span class="opener">Photograph</span>
 											<ul>
 												<li><a href="#">Windsor</a></li>
@@ -48,11 +25,94 @@
 												<li><a href="#">Amercia</a></li>
 												<li><a href="#">Beijing</a></li>
 											</ul>
+									</li>	
+									</ul>
+									<br/>
+										
+									<header class="major">
+									<h2>Tech Blogs</h2>
+									</header>	
+									<ul>
+										{% for menu_topic in site.posts %}
+										{% if  menu_topic.topics  %}
+
+										<li>
+											<a href="{{menu_topic.url}}">{{menu_topic.topics}}</a><span class="opener" style="font-size: 0.1;"></span>
+											<ul>
+												{% for post2 in site.posts %}
+												
+												{% if menu_topic.topics == post2.catelogue %}										
+
+												<li><a href="{{post2.url}}">{{post2.title}}</a></li>
+								
+												{% endif %}
+												{% endfor %}
+												<!--<li><a href="#">Feugiat Veroeros</a></li> -->
+											</ul>
 										</li>
 										
+										{% endif %}
+										{% endfor %}
+										<br/>
+										<!--<li><a href="elements.html">Elements</a></li>-->
+										<!--<li><a href="elements.html">Elements</a></li>-->
+										
+										
 									</ul>
+
+									<div>
+										<h3><a href=" "><i class="fas fa-tags"></i>Tags</h3></a>
+									</div>
+									{% assign first = site.tags.first %}
+									{% assign max = first[1].size %}
+									{% assign min = max %}
+									{% for tag in site.tags offset:1 %}
+									  {% if tag[1].size > max %}
+									    {% assign max = tag[1].size %}
+									  {% elsif tag[1].size < min %}
+									    {% assign min = tag[1].size %}
+									  {% endif %}
+									{% endfor %}
+									{% assign diff = max | minus: min %}
+
+									{% for tag in site.tags %}
+									  {% assign temp = tag[1].size | minus: min | times: 36 | divided_by: diff %}
+									  {% assign basein = temp | divided_by: 4 %}
+									  {% assign remain = temp | modulo: 4 %}
+									  {% if remain == 0 %}
+									    {% assign size = basein | plus: 9 %}
+									  {% elsif remain == 1 or remain == 2 %}
+									    {% assign size = basein | plus: 9 | append: '.5' %}
+									  {% else %}
+									    {% assign size = basein | plus: 10 %}
+									  {% endif %}
+									  {% if remain == 0 or remain == 1 %}
+									    {% assign color = 9 | minus: basein %}
+									  {% else %}
+									    {% assign color = 8 | minus: basein %}
+									  {% endif %}
+
+									  <a href=" " style="font-size: {{ size }}pt; color: #{{ color }}{{ color }}{{ color }};">{{ tag[0] }}</a>
+									{% endfor %}
+									
+
 								</nav>
 
+
+								<!-- {% capture tags %}
+								  {% for tag in site.tags %}
+								    {{ tag[0] }}
+								  {% endfor %}
+								{% endcapture %}
+								{% assign sortedtags = tags | split:' ' | sort %}
+
+								{% for tag in sortedtags %}
+								 
+								  {% for post in site.tags[tag] %}
+								    <a href="{{ post.url }}">{{ tag }}</a>
+								  {% endfor %}
+								  
+								{% endfor %} -->
 							
 							<!-- Footer -->
 								<footer id="footer">

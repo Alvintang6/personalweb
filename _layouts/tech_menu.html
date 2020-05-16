@@ -23,7 +23,7 @@
 
 							<!-- Header -->
 								<header id="header">
-									<a href="index.html" class="logo"><strong>Follow Jietang</strong> with:</a>
+									<a href="{{base}}/index.html" class="logo"><strong>Follow Jietang</strong> with:</a>
 									<ul class="icons">
 										<li><a href="mailto:alvin.tang6@gmail.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
 										
@@ -41,23 +41,25 @@
 										<h1>{{page.title}}</h1>
 									</header>
 
+
+
+
 									
 										{% if  page.topics  %}
-												{% for tag in site.tags %}
-												{% capture tag_name %}{{ tag | first }}{% endcapture %}
-												{% if page.topics == tag_name %}
-												{% for post2 in site.tags[tag_name] %}
+												
+												{% for post2 in site.posts %}	
+												{% if page.topics == post2.catelogue %}
 
 
 													<div class="box">
 														<a href="{{post2.url}}"><h2>{{post2.title}}</h2></a>
-														<p>Felis sagittis eget tempus primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Magna sed etiam ante ipsum primis in faucibus vestibulum.</p>
-														<a href="{{post2.url}}" class="button primary small">continue</a>
+														<p>{{post2.description}}</p>
+														
+												<p style="float:left">{{post2.date}}</p> <p style="float:right"><a href="{{post2.url}}" class="button primary small">continue</a></p><br/>
 
 													</div>
 
 	
-												{% endfor %}
 												{% endif %}
 												{% endfor %}
 												<!--<li><a href="#">Feugiat Veroeros</a></li> -->

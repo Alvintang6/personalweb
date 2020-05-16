@@ -3,7 +3,7 @@ layout: tech_post
 title:  "Robotics Page!"
 date:   2020-05-12 11:51:36 -0300
 catelogue: Robotics
-tags: Machine-Vision
+tags: Robotics
 description: 
 ---
 Second post
