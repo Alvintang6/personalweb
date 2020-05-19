@@ -4,4 +4,13 @@
 
 layout: home
 title: Jie Tang
+
+galleries: 
+  - name: toronto
+    description: The largest city in Canada and provincial captial of Ontario 
+    best_image: 
+  - name: windsor
+    description: A small city in southwestern Ontario, Canada
+    best_image: DSC01050.jpg
+      
 ---

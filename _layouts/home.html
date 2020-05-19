@@ -46,35 +46,28 @@
 								</section>
 
 							
+							
 								<section>
 									<header class="major">
 										<h2>Photography</h2>
 									</header>
 									<div class="posts">
+
+										{% for gallery in page.galleries %}
+										
+
 										<article>
-											<a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
-											<h3>Windsor</h3>
-											<p>A small city in southwestern Ontario, Canada </p>
+											<h3>{{ gallery.name |  markdownify }}</h3>
+											<a href="photos/{{ gallery['name'] }}/index.html" class="image"><img src=" photos/{{ gallery['name'] }}/thumbs/{{ gallery['best_image'] }} " alt="" /></a>
+											<h3>{{ gallery['name'] }}</h3>
+											<p>{{ gallery['description'] }} </p>
 											<ul class="actions">
-												<li><a href="#" class="button">More</a></li>
+												<li><a href="photos/{{ gallery['name'] }}/index.html" class="button">More</a></li>
 											</ul>
 										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic02.jpg" alt="" /></a>
-											<h3>Toronto</h3>
-											<p> The largest city in Canada and provincial captial of Ontario</p>
-											<ul class="actions">
-												<li><a href="#" class="button">More</a></li>
-											</ul>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic03.jpg" alt="" /></a>
-											<h3>Ontario</h3>
-											<p>Other place in Ontario, algonquin, etc.</p>
-											<ul class="actions">
-												<li><a href="#" class="button">More</a></li>
-											</ul>
-										</article>
+										
+										{% endfor %}
+									
 										
 									</div>
 								</section>
