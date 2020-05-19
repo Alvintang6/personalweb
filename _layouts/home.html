@@ -58,7 +58,7 @@
 
 										<article>
 											<h3>{{ gallery.name |  markdownify }}</h3>
-											<a href="photos/{{ gallery['name'] }}/index.html" class="image"><img src=" photos/{{ gallery['name'] }}/thumbs/{{ gallery['best_image'] }} " alt="" /></a>
+											<a href="photos/{{ gallery['name'] }}/index.html" class="image"><img src=" photos/{{ gallery['name'] }}/{{ gallery['best_image'] }} " alt="" /></a>
 											<h3>{{ gallery['name'] }}</h3>
 											<p>{{ gallery['description'] }} </p>
 											<ul class="actions">
