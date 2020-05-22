@@ -44,8 +44,10 @@
 									{{content}}
 
 
-
-									
+									<h3><i class="fas fa-tags"></i>Post Tags</h3>
+									{% for tag in page.tags %}
+									<a href=" {{base}}/tag/{{tag | downcase }}/index.html" >{{ tag }}</a>
+									{% endfor %}
 									{%include chat_bar.html%}
 
 								</section>

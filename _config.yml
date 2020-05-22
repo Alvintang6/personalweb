@@ -54,7 +54,8 @@ gallery:
   symlink: false            # false: copy images into _site. true: create symbolic links (saves disk space)
   title: "Photos"           # Title for gallery index page
   title_prefix: "Photos: "  # Title prefix for gallery pages. Gallery title = title_prefix + gallery_name
-  sort_field: "date_time"   # How to sort galleries on the index page.
+  sort_field: "date_time"
+  lightbox: true   # How to sort galleries on the index page.
                             # Possible values are: title, date_time, best_image
   thumbnail_size:
     x: 400                  # max width of thumbnails (in pixels)
@@ -64,18 +65,21 @@ gallery:
     toronto:
       best_image:   # The image to show on the gallery index page. Defaults to the last image.
     windsor:
-      best_image: DSC01050_.jpg 
-      name: "日本の旅"       # Defaults to directory name, replacing _ with spaces & capitalizing words.
-    awesome_stuff:
-      best_image: snaileo_gonzales.jpg
-      sort_reverse: true    # Reverse sort images in gallery.
+      best_image: DSC01050.jpg 
+      name: "Windsor"       # Defaults to directory name, replacing _ with spaces & capitalizing words.
     secret_stuff:
       hidden: true          # Don't show this gallery on the index page. People must guess the URL.
     with_info:
       info:
         desc: "Gallery Description" # Info fields can be used in custom templates.
 
-
+photos:
+  - name: toronto
+    description: The largest city in Canada and provincial captial of Ontario 
+    best_image: 
+  - name: windsor
+    description: A small city in southwestern Ontario, Canada
+    best_image: DSC01050.jpg
 
 # exclude:
 #   - .sass-cache/

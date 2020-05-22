@@ -9,6 +9,10 @@
 									</form>
 								</section>
 
+
+
+
+
 							<!-- Menu -->
 								<nav id="menu">
 									<header class="major">
@@ -17,13 +21,14 @@
 									<ul>
 									<li><a href="{{base}}/index.html">About me</a></li>
 									<li>
+
+
 											<span class="opener">Photograph</span>
 											<ul>
-												<li><a href="#">Windsor</a></li>
-												<li><a href="#">Toronto</a></li>
-												<li><a href="#">Ontario</a></li>
-												<li><a href="#">Amercia</a></li>
-												<li><a href="#">Beijing</a></li>
+												{% for photo in site.photos %}
+
+												<li><a href="{{base}}/photos/{{ photo['name'] }}/index.html">{{ photo['name'] }}</a></li>
+												{% endfor %}
 											</ul>
 									</li>	
 									</ul>
