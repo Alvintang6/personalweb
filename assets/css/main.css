@@ -193,8 +193,8 @@ blockquote {
   padding: 0.5em 0 0.5em 2em; }
 
 code {
-  background: rgba(230, 235, 237, 0.25);
-  border-radius: 0.375em;
+  background: rgba(230, 235, 237, 0);
+  border-radius: 0;
   border: solid 1px rgba(210, 215, 217, 0.75);
   font-family: "Courier New", monospace;
   font-size: 0.9em;
@@ -210,7 +210,7 @@ pre {
     display: block;
     line-height: 1.75;
     padding: 1em 1.5em;
-    overflow-x: auto; }
+    overflow: hidden; }
 
 hr {
   border: 0;

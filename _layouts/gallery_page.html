@@ -50,11 +50,11 @@
                               <img src="thumbs/{{ image.name }}" alt="" />
                           </a>
                           {% assign photo_theme = page.title | split: ":" %}
-                          {% assign photo = photo_theme.last | append: "1" %}
+                          {% assign photo = photo_theme.last %}
                           {% assign photo_id = image.name | split: "." %} 
                           {% assign photo_name = photo_id.first %}
-                          {% assign photo_dis = site.data.Windsor[photo_name].description%} 
-                          <p>{{photo}}</p>
+                          {% assign photo_dis = site.data.[photo].[photo_name].description%} 
+                          <p>{{photo_name}}</p>
                           <p> {{photo_dis }} </p>
                         </article>
                         {% endfor %}

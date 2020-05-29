@@ -1,0 +1,65 @@
+---
+layout: tech_post
+title:  "Linux kernel module beginning (I)"
+date:   2020-05-25 11:51:36 -0300
+catalogue: Mcu&Mpu
+tags: Linux kernel Dirver
+description: kernel module cross-compilng from x86 to arm
+---
+
+## (1).Envirnoment prepare & module insert
+
+Linux concerns kernel module version critically and it refuses to load kernel drivers that do not match. So at least the Minor version we use to do cross-compiling should match with the target platform. The download address can be find [linux kernel download](https://www.kernel.org/). Or using following command to get history version
+```
+sudo wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-x.x.xx.tar.xz
+```
+
+To cross-compile linux kernel, some configurations should be done first. The gui menu can be used by 
+```
+make menuconfig
+```
+This simply gui can add the kernel module support for our kernel and customize the kernel.
+Using load from linux-x.x.xx/arch/arm/configs can some default platforms. When finish loading and modifying 'config' file save it to linux-x.x.xx/.config path. Later the makefile will call the configuration file when doing 'make'.   
+
+Before using the following make command to compile the kernel, making sure the gcc-gnueabinf installed.
+```
+make ARCH=arm -j8 CROSS_COMPILE=arm-linux-gnueabihf-
+```
+
+A kernel zImage is generated in `arch/boot`, also now we can using the header file in `linux-x.x.xx/include` to make our kernel modules. 
+
+In our customized kernel module, 'makefile' will call the phony command `make modules` in makefile under `linux-x.x.xx` which help us compile and link the corresponding linux kernel library.
+
+```makefile
+KERNEL_DIR=/home/$(your_linux-x.x.xx)
+obj-m := helloworld.o
+all:
+$(MAKE) -C $(KERNEL_DIR) M=$(CURDIR) modules
+clean:
+$(MAKE) -C $(KERNEL_DIR) M=$(CURDIR) clean
+```
+
+With the command insmod, the module will be inserted into the kernel (Tips: printk function may not print in the terminal, in that case, `etho 8 > /proc/sys/kernel/printk `): 
+ 
+![AltText-w150](/blog_photos/MCU&MPU/ismod.png){:height="50%" width="50%"}
+
+## (2) register the character device into kernel
+
+
+```c
+int = 0;
+    for(int i=0;i++;i<100>){
+
+
+}
+
+
+```
+
+{% highlight ruby linenos %}
+    def foo
+      puts 'foo'
+    end
+{% endhighlight %}
+
+device

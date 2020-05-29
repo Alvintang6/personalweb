@@ -2,7 +2,7 @@
 layout: tech_post
 title:  "Robotics Page!"
 date:   2020-05-12 11:51:36 -0300
-catelogue: Robotics
+catalogue: Robotics
 tags: Robotics
 description: 
 ---
