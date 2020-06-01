@@ -39,27 +39,72 @@ clean:
 $(MAKE) -C $(KERNEL_DIR) M=$(CURDIR) clean
 ```
 
-With the command insmod, the module will be inserted into the kernel (Tips: printk function may not print in the terminal, in that case, `etho 8 > /proc/sys/kernel/printk `): 
+With the command insmod, the module will be inserted into the kernel (Tips: printk function may not print in the terminal, in that case, `echo 8 > /proc/sys/kernel/printk `): 
  
 ![AltText-w150](/blog_photos/MCU&MPU/ismod.png){:height="50%" width="50%"}
 
 ## (2) register the character device into kernel
+A typical character device driver may include following components.   
+  1. initial & exit function (initial and delete driver module)
+  2. register & unregister function (inside initial, exit function and used for configurating operations of drivers)
+  3. file_operation structure (include basic operation accept by drives like: open,read,write and etc..) 
 
 
+- A basic initial and exit function is shown below: 
+  
 ```c
-int = 0;
-    for(int i=0;i++;i<100>){
+#define CHRDEVTEST_MAJOR 200
+#define CHRDEVTEST_NAME "chrdevtest"
 
+static int __init chrdevtest_init(void){
+    int ret;
+    ret = register_chrdev( CHRDEVTEST_MAJOR, CHRDEVTEST_NAME, &chrdevtest_fops);
+    if(ret<0){
+        printk("chrdevtest_init failed \n");
+    }
+    return 0;
+} 
 
+static void __exit chrdevtest_exit(void){
+
+    unregister_chrdev( CHRDEVTEST_MAJOR, CHRDEVTEST_NAME);
 }
-
-
 ```
 
-{% highlight ruby linenos %}
-    def foo
-      puts 'foo'
-    end
-{% endhighlight %}
+- Here, the chrdevtest_fops is a realization of file_operation structure.
+Inside the structure, the corresponding operations can be configured by using function pointer: 
 
-device
+```c
+static struct file_operations chrdevtest_fops={
+    .owner = THIS_MODULE,
+    .open = chrdevtest_open,
+    .release = chrdevtest_release,
+    .read = chrdevtest_read,
+    .write = chrdevtest_write,
+};
+```
+- Some simple example of operation function is shown below:
+
+```cpp
+static int chrdevtest_open(struct inode *inode, struct file *filp){
+    printk("chrdevtest_open \n");
+    return 0;
+}
+
+static int chrdevtest_release(struct inode *inode, struct file *filp){
+    printk("chrdevtest_release \n");
+    return 0;
+}
+
+static ssize_t chrdevtest_read(struct file *filp, char __user * buf, size_t count, loff_t *ppos)
+{
+    printk("chrdevtest_read \n");
+    return 0;
+ }
+
+static ssize_t chrdevtest_write(struct file *filp, const char __user * buf, size_t count, loff_t *ppos)
+{
+    printk("chrdevtest_write \n");
+    return 0;
+ }
+```

@@ -49,13 +49,23 @@
                           <a href="{{ image.name }}" class="image">
                               <img src="thumbs/{{ image.name }}" alt="" />
                           </a>
-                          {% assign photo_theme = page.title | split: ":" %}
-                          {% assign photo = photo_theme.last %}
+                          {% assign photo_theme = page.title | remove: " "%}
                           {% assign photo_id = image.name | split: "." %} 
                           {% assign photo_name = photo_id.first %}
-                          {% assign photo_dis = site.data.[photo].[photo_name].description%} 
-                          <p>{{photo_name}}</p>
-                          <p> {{photo_dis }} </p>
+                          {% assign photo_dis = site.data.photos_explain[photo_theme]%}
+                          {% assign photo_dis = photo_dis[photo_name].description %}
+                          
+                         
+                         <style> 
+                            
+                          </style> 
+                        </head> 
+                        <p style="text-align:center;" > 
+                          {% if photo_dis %}
+                          ——{{photo_dis}}
+                          {% endif %}
+                        </p>
+                          
                         </article>
                         {% endfor %}
                       </div>
@@ -66,7 +76,7 @@
                 
                   
 
-
+                      {%include chat_bar.html%}
                 </section>
                 
                 
