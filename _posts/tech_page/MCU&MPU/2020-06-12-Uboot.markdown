@@ -1,0 +1,55 @@
+---
+layout: tech_post
+title:  "Uboot porting with NXP MX serie"
+date:   2020-06-12 11:51:36 -0300
+catalogue: Mcu&Mpu
+tags: Linux Uboot 
+description:  Uboot porting with NXP MX6Ull 
+---
+* TOC
+{:toc}
+
+Some previous knowledge about U-boot has been discussed in [another blog](../../../2020/05/25/embedded_linux.html).
+
+## 1. Files need to be configured
+
+THe following files are needed to be created and configured before doing further modifications.   
+
+`/configs/<board_name>_defconfig`
+
+`/include/configs/<board_name>.h`
+
+`/arch/arm/cpu/armv7/mash-imx/mx6/Kconfig`   //adding config TARGET and source "board/\<vendor>/\<board_name>"
+
+```s
+/board/<vendor>/<board_name>/ 
+                        ...Kconfig
+                        ...<board_name>.c
+                        ...MAINTAINERS
+```
+
+## 2. Add or modify devices support
+One of the most important file will need to modify is `/board/<vendor>/<board_name>/<board_name>.c`, which 
+
+### 2.1 Add LCD support
+
+
+
+## 3. Uboot command 
+
+
+### 3.1 Network commands
+
+Basically, network connections can be very useful in debugging drivers and testing a system.
+
+#### 3.1.1 ping and network configuration
+
+ping and configuration
+Before we use the network. There are some configurations have to be done first.
+- setenv ipaddr 192.168.0.209 (Or using dhcp for dynamically allocate ip address)
+- setenv ethaddr 08:00:00:00:22:02 (Depend on the ethernet port for eth-0 ethaddr, eth-1 eth1addr, eth-2 eth2addr)
+- setenv gatewayip 192.168.0.1
+- setenv netmask 255.255.255.0 
+- setenv serverip 192.168.1.250
+- saveenv
+

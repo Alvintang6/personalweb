@@ -1,0 +1,20 @@
+---
+layout: tech_post
+title:  "Circuit"
+date:   2020-05-12 11:51:36 -0300
+catalogue: Notes
+tags: Notes
+description: 
+---
+## Table of Content
+* TOC
+{:toc}
+
+## Push-Pull Output (推挽输出)
+https://zhuanlan.zhihu.com/p/41942876
+
+
+## Open Drain Output(开漏输出)
+
+
+

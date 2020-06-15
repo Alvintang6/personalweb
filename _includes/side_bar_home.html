@@ -4,8 +4,21 @@
 
 							<!-- Search -->
 								<section id="search" class="alt">
-									<form method="post" action="#">
-										<input type="text" name="query" id="query" placeholder="Search" />
+									<form action="https://google.com/search" id="searchForm">
+										<input type="text" name="q" value="" required>
+										<input type="hidden" name="site" value="www.tangjies.com">
+									</form>
+								<script>
+									var searchForm = document.getElementById('searchForm');
+									searchForm.onsubmit = function(){
+										var url = this.action;
+										var q = this.children['q'].value;
+										var site = this.children['site'].value;
+										var url = url + '?q='+q+' site:'+ site;
+										window.open(url);
+										return false;
+									};
+								</script>
 									</form>
 								</section>
 

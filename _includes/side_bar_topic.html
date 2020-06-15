@@ -40,16 +40,21 @@
 									<ul>
 										{% for menu_topic in site.posts %}
 										{% if  menu_topic.topics  %}
-
+										{% unless menu_topic.topics == "Notes" %}
 										<li>
 											<a href="{{menu_topic.url}}">{{menu_topic.topics}}</a><span class="opener" style="font-size: 0.1;"></span>
 											<ul>
+												{% endunless %}
 												{% for post2 in site.posts %}
 												
+
 												{% if menu_topic.topics == post2.catalogue %}										
+												{% unless menu_topic.topics == "Notes" %}
+												{% if post2.tags[0] != "中文" %}
 
 												<li><a href="{{post2.url}}">{{post2.title}}</a></li>
-								
+												{% endif %}
+												{% endunless %}
 												{% endif %}
 												{% endfor %}
 												<!--<li><a href="#">Feugiat Veroeros</a></li> -->
@@ -97,7 +102,9 @@
 									    {% assign color = 8 | minus: basein %}
 									  {% endif %}
 
+									  {% unless tag == "Notes" %}
 									  <a href=" {{base}}/tag/{{tag[0] | downcase }}/index.html" style="font-size: {{ size }}pt; color: #{{ color }}{{ color }}{{ color }};">{{ tag[0] }}</a>
+									  {% endunless%}
 									{% endfor %}
 									
 

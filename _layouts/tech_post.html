@@ -30,11 +30,25 @@
 								<section>
 									<header class="main">
 										<h1>{{page.title}}</h1>
+										<p>{{page.date | date_to_string }}</p>
 									</header>
+									{% if page.chinese_link %}
+									<p style="float:right"><a href=" {{base}}/{{page.chinese_link}}" >中文连接</a></p>
+
+									{% endif %} 
+									
+
+
+									<h3><i class="fas fa-tags"></i>Post Tags</h3>
+									{% for tag in page.tags %}
+									<a href=" {{base}}/tag/{{tag | downcase }}/index.html" >{{ tag }}</a>
+									{% endfor %}
+									<br/>
+									<br/>
 
 									{{content}}
 
-
+									<br/>
 									<h3><i class="fas fa-tags"></i>Post Tags</h3>
 									{% for tag in page.tags %}
 									<a href=" {{base}}/tag/{{tag | downcase }}/index.html" >{{ tag }}</a>

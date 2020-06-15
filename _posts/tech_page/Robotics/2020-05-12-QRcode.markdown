@@ -1,9 +1,9 @@
 ---
 layout: tech_post
 title:  "Usage of QR code in ROS"
-date:   2020-05-12 11:51:36 -0300
+date:   2019-12-12 11:51:36 -0300
 catalogue: Machine Vision
-tags: Robotics QRcode Camera-model Localization
+tags: ROS QRcode Camera-model Localization
 description: 
 ---
 ## Table of Content
@@ -16,7 +16,7 @@ Using vision to do the indoor localization is one of the most feasible and gener
 ## 1. Pose estimation and camera model
 A camera model can be described by intrinsic model and extrinsic model. Intrinsic model includes those inherent features of one camera, like distortion, focal length, and pixel size. Extrinsic model indicate the pose of a camera inside a world frame.   
 
-### Intrinsic model
+### 1.1 Intrinsic model
 The camera model can characterize transformations from a 3D world frame to a 2D
 image plane. Here using K to represent the intrinsic matrix[<sup>1</sup>](#refer-anchor-1). $[P_x,P_y]$ is a translation vector indicating the offset of 2D points in a image plane. Where $[x_{pix},\  y_{pix}]^T$ represents a point in camera image planes (pixel coordinates), $[X_{c},\  Y_{c},\  Z_{c}]^T$ represents a point in 3D camera coordinates.
 
@@ -40,7 +40,7 @@ Where $[x_{distorted},\  y_{distorted}]^T$ represents the point in distorted ima
 </div>
 
 
-### Extrinsic model(Pose estimation)
+### 1.2 Extrinsic model(Pose estimation)
 Extrinsic parameters indicate the pose of cameras related to the world frames, which is represented by the rotation matrix $\mathbf{R}$ and translation vector $\mathbf{t}$. The transformation from world frames $\mathbf{P_{w}}$ to camera coordinates $\mathbf{P_{c}}$ is showing below, in equation (3).  
 
 
@@ -80,7 +80,7 @@ In (4), the intrinsic parameters, $\textbf{D}$, and $\textbf{K}$ can be identifi
 
 ## 2. Ar_track_alvar (A QRcode package in ROS)
 
-### Introduction of Ar_track_alvar
+### 2.1 Introduction of Ar_track_alvar
 Ar_track_alvar is a package in ROS based on ALVAR library. ALVAR is a
 suite of SDKs and products that help researchers and engineers to create augmented
 reality applications. In Ar_track_alvar, it provides the fast object recognition
@@ -93,7 +93,7 @@ be transformed to 3D world frame. Here is the official website of [Ar_track_alva
 
 
 
-### Launch File
+### 2.2 Launch File
 
 ```xml
 
@@ -134,7 +134,7 @@ be transformed to 3D world frame. Here is the official website of [Ar_track_alva
 
 ```
 
-### Predefined Ar_track_alvar Message header
+### 2.3 Predefined Ar_track_alvar Message header
 
 The information shared between ROS nodes, processes, is packaged in 'messages'. A predefined [Ar_track_alvar message](http://docs.ros.org/melodic/api/ar_track_alvar_msgs/html/msg/AlvarMarkers.html) is shown:
 
@@ -152,12 +152,41 @@ AlvarMarker message contains the 6 degrees of freedom pose information.
 <div align=center><img width = '100%' height ='100%' src ="/blog_photos/Machine_Vision/AR_track_alvar_msg1.png"/>
 </div>
 
-### Example code in C++
+### 2.4 Example code in C++
+When writing the application to solve the position and id_number of Alvar marker in C++, one thing should be alert:
+When you have multiple markers at same time alvarmarkers message will wrapper all alvarmark inside a array structure, which like: `message.markers[i]`. 
+
+Here is an example about how to use alvarmarkers message in a callback function:
+
+```cpp
+
+void AR::pose_CB(const ar_track_alvar_msgs::AlvarMarkers &msg) {
+
+	if (!msg.markers.empty()) {
+    int mkr_cnt = msg.markers.size();
+	 	for(i=0;i<mkr_cnt;i++){
+ 	 		print("maker_id = %d", msg.markers[i].id);
+		        
+			tf::Quaternion q(msg.markers[i].pose.pose.orientation.x, msg.markers[i].pose.pose.orientation.y, msg.markers[i].pose.pose.orientation.z, msg.markers[i].pose.pose.orientation.w);
+      		tf::Matrix3x3 m(q);
+      		double roll, pitch, yaw;
+      		m.getRPY(roll, pitch, yaw);
+			// return the pose of robot1
+      		printf("the position of marker%d x= %f,y=%f with pitch=%f \n",msg.markers[i].id,msg.markers[i].pose.pose.position.x,msg.markers[i].pose.pose.position.z, pitch);
+		 }
+
+	}
+}
+
+```
+
+
 
 ## reference
 
 <div id="refer-anchor-1"></div>
-- [1] [What is camera calibration.](https://nl.mathworks.com/help/vision/ug/camera-
-calibration.html.)
+- [1] [What is camera calibration.](https://www.mathworks.com/help/vision/ug/camera-calibration.html)
 
+<div id="refer-anchor-2"></div>
+- [2] [Distributed Formation Control for Ground Vehicles with Visual Sensing Constraint.](https://scholar.uwindsor.ca/etd/8181)
 

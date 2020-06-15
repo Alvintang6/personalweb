@@ -14,7 +14,7 @@ topics: Notes
                 {
                     if (!pass1)
                     history.go(-1);
-                    if (pass1 == "7654321") 
+                    if (pass1 == "321") 
                     {
                         alert('right!');
                         break;
