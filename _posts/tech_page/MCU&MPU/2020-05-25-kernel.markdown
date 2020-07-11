@@ -41,7 +41,7 @@ $(MAKE) -C $(KERNEL_DIR) M=$(CURDIR) clean
 
 With the command insmod, the module will be inserted into the kernel (Tips: printk function may not print in the terminal, in that case, `echo 8 > /proc/sys/kernel/printk `): 
  
-![AltText-w150](/blog_photos/MCU&MPU/ismod.png){:height="50%" width="50%"}
+![ismod](/blog_photos/MPU/ismod.png){:height="50%" width="50%"}
 
 ## (2) register the character device into kernel
 A typical character device driver may include following components.   
@@ -53,8 +53,8 @@ A typical character device driver may include following components.
 - A basic initial and exit function is shown below: 
   
 ```c
-#define CHRDEVTEST_MAJOR 200
-#define CHRDEVTEST_NAME "chrdevtest"
+#define CHRDEVTEST_MAJOR 248
+#define CHRDEVTEST_NAME "EmbedCharDev"
 
 static int __init chrdevtest_init(void){
     int ret;
@@ -108,3 +108,13 @@ static ssize_t chrdevtest_write(struct file *filp, const char __user * buf, size
     return 0;
  }
 ```
+After inserting kernel module, the kernel module name and it major id can be seen under `/proc/devices`.  
+`cat /proc/devices `
+<div align=center><img width = '30%' height ='30%' src ="/blog_photos/MPU/deviceid.jpg"/><p>Figure. Major deive ID </p>
+</div>
+
+Using `mknod /dev/<name> c major_id minor_id` to creat a device, the deivce will be show at `/dev`   
+`mknod /dev/chrdev1 c 248 0`
+
+Or using `device_create` automatically creat a device inside dirver.
+` device = device_create(class, NULL, devid, NULL, DEV_NAME); `

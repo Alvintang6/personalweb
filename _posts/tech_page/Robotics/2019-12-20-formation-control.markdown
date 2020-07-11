@@ -16,7 +16,7 @@ This formation control project is my master thesis topic, which controls robots 
 Before introduce the algorithm and implementation method, lets see the video of my robots:
 
 <div align=center>
-<iframe width="640" height="480"
+<iframe width="480" height="360"
 src="https://www.youtube.com/embed/5x1tOIw7TJc">
 </iframe>
 </div>
@@ -46,9 +46,9 @@ Where $p_{i}, v_{i} \in \Re^{n}$ ,$n \in \{2,3\}$, are the position and the velo
 For nonholonomic models, the model on $\Re^{2}$ is generally given by 
 
 <div align=center><img width = '25%' height ='25%' src ="/blog_photos/Robotics/nonholonomic.png"/><p> Equation (1.1.2). nonholonomic dynamic model</p></div>
-Where the $v_{i}$, ${\theta_i}$ and $\omega_{i}$ are linear velocity, handing direction and angular velocity respectively. The vehicle position in world frame is presented by $p_{i}=|x_{i}, y_{i}|^{\top} \in \Re^{2}$. A general illustration of nonholonomic vehicle model is shown in Fig.\ref{nonholonomic}
+Where the $v_{i}$, ${\theta_i}$ and $\omega_{i}$ are linear velocity, handing direction and angular velocity respectively. The vehicle position in world frame is presented by $p_{i}=|x_{i}, y_{i}|^{\top} \in \Re^{2}$. A general illustration of nonholonomic vehicle model is shown in Fig below.
 
- 
+ <div align=center><img width = '25%' height ='25%' src ="/blog_photos/Robotics/nonholonomic_robot.png"/><p> Fig illustration of nonholonomic vehicles.</p></div> 
 
 
 
@@ -99,7 +99,34 @@ The above conclusion is the basic of gradient formation control algorithm. It wi
 
 ## 2. Implementation of a formation system 
 
-### 2.1 
+### 2.1. Overview of the system 
+
+Even it is a distributed control system, we still need a central controller(laptop) to send start and stop command only.
+
+
+<div align=center><img width = '40%' height ='40%' src ="/blog_photos/Robotics/layout.jpg"/><p> <br/>Fig Formation system of 4 vehicles .</p></div> 
+
+Vehicles are designed by myself with nvida TX2 as high level cointroller, and a stm32f1 based low level controller which used to control motors directly. The picture below is a general architecture that briefly illustrate the main components used in
+this project. The main program runs on NVIDIA TX2 with Linux system. Robot
+Operation System (ROS) are used to fulfill high-level action which finally send the
+desired velocity to the MCU (Micro Controller Unit). MCU is responsible for low-level
+motors control.  
+<div align=center><img width = '40%' height ='40%' src ="/blog_photos/Robotics/TX2_stm32.jpg"/><p> <br/>Fig Project Architecture .</p></div>
+
+### 2.2. Perception -- Vision 
+
+It is crucial for robot to know where are they and their companions. Basically, people have developed several indoor localization method, like ultrasonic, lidar, vision, and etc. In this project, I use vision, QR-code marker, combined with inertial. For how to use the QR-code I wrote in [another post](/2019/12/12/QRcode.html)  
+The vehicles around with 4 markers, and attached with 2 cameras in opposite direction to localize each other.
+
+<div align=center><img width = '35%' height ='35%' src ="/blog_photos/Robotics/vehicle_photo.jpg"/><p> <br/>Fig Photo of the vehicle .</p></div>
+
+### 2.3. Code and design 
+/* TODO */
+
+The code can be found in [github](https://github.com/Alvintang6/robot_formation)
+
+
+
 
 
 ## Reference

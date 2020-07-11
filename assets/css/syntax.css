@@ -1,5 +1,7 @@
-.highlight table td { padding: 5px; }
+.highlight table td { padding: 0px; background-color: rgba(230, 235, 237, 0); }
 .highlight table pre { margin: 0; }
+.highlight .lineno { text-align: right;  background: rgba(230, 235, 237, 0);}
+.highlight .code { border-left: 1px solid #ccc;padding: 0.25em 0.65em; }
 .highlight .gh {
   color: #999999;
 }

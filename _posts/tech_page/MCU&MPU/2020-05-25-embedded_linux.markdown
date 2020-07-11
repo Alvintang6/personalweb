@@ -58,4 +58,41 @@ To adding support of our customized board, most of the time, we only need the mo
 The above configuration is the basic structure for a customized board. For the detailed configuration, I will write in [another blog](../../../2020/06/12/Uboot.html) about adding support of LCD, ethernet, and other devices.
 
 
-### 2. kernel
+### 2. Linux kernel
+
+
+#### 2.1 Compile the official kernel  
+The structure of Linux kernel is very similar with U-boot project. Also, we can use [nxp offical linux kernel](https://github.com/Freescale/linux-fslc) as our template to customize our kernel (git switch x.xx.x--imx:using the branch with --imx).
+
+`make ARCH=arm clean `<br/>
+`make ARCH=arm XXX_defconfig` (imx_v7_defconfig for nxp offical imx6)<br/>
+`make menuconfig`(<span style="color:red;">optional</span> if dont need config just esc)<br/>
+`make ARCH=arm -j10 CROSS_COMPILE= arm-linux-gnueabihf-`<br/> 
+
+
+<span style="color:red;">Note:</span> Sometimes make cannot go through due to gcc version. In that case using older arm-linux-nueabihf- from source with `export PATH=/{your gcc address}/bin:$PATH` <br/> 
+
+
+#### 2.2 Customize our linux kernel 
+
+
+    To customize a linux kernel, two important file are needed:
+    - xxx_defconfig   (in arch/arm/configs/)
+    - xxx.dts (in arch/arm/boot/dts ) 
+
+#### 
+
+
+
+### 3. Rootfs 
+
+rootfs can be understand as the container files  of linux environment, configuration, and programs in the mpu.    
+
+#### 3.1 Roofts make
+
+Rootfs can be made from various sources, busybox, buildroot, yocto, openembedded. 
+
+
+#### 3.2 mount rootfs from nfs server
+setenv bootargs 'console=ttymxc0,115200 nfsvers=4 root=/dev/nfs nfsroot=192.168.0.188:/home/jie/workdir/rootfs ip=192.168.0.16:192.168.0.188:192.168.0.1:255.255.255.0::eth1:off'
+

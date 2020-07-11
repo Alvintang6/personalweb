@@ -51,15 +51,17 @@
 												{% for post2 in site.posts %}	
 												{% if post2.catalogue  %}
 
-
+														{% unless post2.catalogue == "Notes" %}
+													
 													<div class="box">
 														<a href="{{post2.url}}"><h2>{{post2.title}}</h2></a>
 														<p>{{post2.description}}</p>
+												
 														
 												<p style="float:left">{{post2.date | date_to_string }}</p><p style="float:right"><a href="{{post2.url}}" class="button primary small">continue</a></p><br/>
 
 													</div>
-
+													    {% endunless %}
 	
 												{% endif %}
 												{% endfor %}

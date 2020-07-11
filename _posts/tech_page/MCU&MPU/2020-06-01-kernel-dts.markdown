@@ -5,6 +5,7 @@ date:   2020-05-25 11:51:36 -0300
 catalogue: Mcu&Mpu
 tags: Linux kernel Device-tree
 description: kernel Device tree build 
+chinese_link: /chinese/dts.html
 ---
 
 * TOC
@@ -141,7 +142,7 @@ Document/devicetree/bindings/xxx
 
 ## 5. "of" function
 
-"of" function are used to obtain the contain information in the node.
+In linux system lib, a series "of" function are provided to obtain the node information from the device tree.
 
 
 - struct device_node *of_find_node_by_path(const char *path);
@@ -212,14 +213,32 @@ For reading the properties linux provide the function:
 - if the property is int:
 - int of_property_read_uXX (const struct device_node *np, const char *propname,u8 *out_values)(XX = 8 16 32 64)
 
-
 - if the string: 
 - int of_property_read_string(const struct device_node *np,const char *propname, const char **out_string)
 
 
-## 6. Pinctrl & GIOP subsystem
+## 6. Match between device and drive
 
-### 6.1. Pinctrl:
+### 6.1 Device tree device match with driver
+ device tree matching driver will use of_match_table. The of_match_table should be define inside other structure.
+
+```c
+static const struct of_device_id rgb_led[] = {
+	{.compatible = "fire,rgb_led"},
+	{/* sentinel */}};
+
+struct platform_driver led_platform_driver = {
+.driver = {
+		.name = "rgb-leds-platform",
+		.owner = THIS_MODULE,
+		.of_match_table = rgb_led,
+	}
+};
+```
+
+## 7. Pinctrl & GIOP subsystem
+
+### 7.1. Pinctrl:
 
 Pinctrl system is just other device tree nodes but under iomuxc node.
 
@@ -301,7 +320,7 @@ Some marco definition of IO-Pin property can be find in `/arch/arm/boot/dts/xxx-
   the value will be written into input_reg.
 
 
-### 6.2 pinctrl driver:
+### 7.2 pinctrl driver:
 
   When pinctrl node compatible property match with the compatible member of platform device structure `  const struct of_device_id ` the .probe function which inside platform_device will be executed. 
 
@@ -330,7 +349,7 @@ Some marco definition of IO-Pin property can be find in `/arch/arm/boot/dts/xxx-
   - pmx_set : set the multiplex of pins.
 
 
-### 6.3. GPIO subsystem
+### 7.3. GPIO subsystem
 
 After we configured the pins as GPIO. The next step is setting some properties of our GPIO pins. Here the GPIO subsystem can be used to do this work.
 
@@ -342,3 +361,5 @@ After we configured the pins as GPIO. The next step is setting some properties o
 ```
 
 <span style="color:red;">Tips:</span>
+
+
