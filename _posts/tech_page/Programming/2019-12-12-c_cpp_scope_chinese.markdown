@@ -12,3 +12,5 @@ permalink: /chinese/C_Cpp_scope.html
 {:toc}
 
 ###  
+
+C语言中常量后缀有U，L，F，其中的u为unsigned，l为long，f为float

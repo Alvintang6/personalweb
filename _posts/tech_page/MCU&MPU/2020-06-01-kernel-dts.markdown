@@ -360,6 +360,30 @@ After we configured the pins as GPIO. The next step is setting some properties o
 
 ```
 
+
+
+
+#### gpio-ranges
+The first number is the index of first pin in this range,  
+The second number, when multiplied by 4 is the offset to the iomuxc control register (starting at 20E_0000h)   
+the third number is the number of pins in this range.  
+
+Take gpio1 for example:
+
+`gpio-ranges = <&iomuxc  0 23 10>, <&iomuxc 10 17 6>, <&iomuxc 16 33 16>;`
+
+ 
+
+Now the GPIO1 registers aren't contiguous, pins are in 3 ranges.
+
+ 
+
+First group is GPIO1.0 - GPIO1.9 (10pins), base offset = 23 * 4 = 0x5c which is IOMUXC_SW_MUX_CTL_PAD_GPIO1_IO00  
+Second group is GPIO1.10 - GPIO1.15 (6pins), base offset = 17 * 4 = 0x44 which is IOMUXC_SW_MUX_CTL_PAD_JTAG_MOD  
+Third group is GPIO1.16 - GPIO1.31 (16pins), base offset = 33 * 4 = 0x84 which is IOMUXC_SW_MUX_CTL_PAD_UART1_TX_DATA
+
+
+
 <span style="color:red;">Tips:</span>
 
 
