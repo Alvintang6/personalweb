@@ -1,0 +1,18 @@
+---
+layout: tech_post
+title:  " C++ STL container"
+date:   2020-08-06 11:51:36 -0300
+catalogue: Programming
+tags: C++ 
+description: C/C++ comprehensive knowledge 
+#chinese_link: /chinese/C_Cpp_STL.html
+---
+
+
+## Performance enhancement 
+
+### cin
+
+ios::sync_with_stdio(false); cin.tie(0);
+
+

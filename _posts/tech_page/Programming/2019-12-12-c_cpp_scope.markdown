@@ -37,3 +37,20 @@ Scope, storage, and linkage are decided by definition place and identifiers.
 ### static 
 
 
+
+#### Static member varibale in C++
+
+```c
+class my_client{
+    public:
+    	static int count;
+};
+
+``` 
+features:
+1.The variable exists even when no objects of the class have been definded so it can be modified at any ponit i the source code.
+2.All objects that try to access their cout member variable refer to the only class-vound static count variable
+3.The variable is allocated only once, regardless of how many objects are instantiated because it is bound to class itself, not its instances
+
+
+

@@ -1,0 +1,422 @@
+---
+layout: tech_post
+title:  " SQL command and usage "
+date:   2019-12-12 11:51:36 -0300
+catalogue: Programming
+tags: SQL 
+description: Basic command and usage of SQL in java.
+#chinese_link: /chinese/C_Cpp_scope.html
+---
+## Table of Content
+* TOC
+{:toc}
+
+
+
+## Basic command of SQL
+
+- show all databases:  
+`Show databases;`
+
+- create a database:
+create database \<your_database\>;
+
+- select the database to use:  
+use \<your_database\>;
+
+### Create a table:  
+- general table create 
+```C 
+CREATE TABLE <your_table> (  
+	<name1> <data_type>,   
+	<name2> <data_type>,  
+	<name3> <data_type>......);   
+```
+data_type can be chosen from: number; date and time; char ; details are in [datatype](#anchor_datatype)
+
+- table with <b>primary key</b> constrain:  
+  The column name modified with `primary key` means that the items under this column should be unique.
+```C 
+CREATE TABLE <your_table> (  
+	<name1> <data_type> primary key,   
+	<name2> <data_type>,  
+	<name3> <data_type>......);   
+```
+<B>Add primary key after create table:</B>  
+`alter table <your_table> add primary key(<name1>);`  
+
+
+<B>Delete primary key after create table:</B>   
+`alter table <your_table> drop primary key(<name1>);`
+
+- Unique constrain:  
+CREATE TABLE <your_table> (  
+	<name1> <data_type> primary key,   
+	<name2> <data_type>,  
+	<name3> <data_type>,
+	...,
+	unique(<name1>)); 
+
+`alter table <your_table> add primary key(<name1>);`  
+<span style="color:red;">Tips:</span> unique constrain can be <span style="color:red;">'NULL'</span>, primary key cannot.
+
+- Composite Primary Key:
+  The column names combined by `primary key` means that the items under these columns should not be same simultaneously
+```C 
+CREATE TABLE <your_table> (  
+	<name1> <data_type> primary key,   
+	<name2> <data_type>,  
+	<name3> <data_type>,
+	...,
+	primary key(<name1>,<name2>));   
+```
+
+- Auto increasing Key:
+
+```C 
+CREATE TABLE <your_table> (  
+	id int primary key auto_increment,  
+	name varchar(50)
+	...,);   
+
+insert into <your_table> (name) value ('<name_value>');
+```
+
+- not NULL constrain:
+ 
+```C 
+CREATE TABLE <your_table> (  
+	<name1> <data_type>,   
+	<name2> <data_type>,  
+	<name3> <data_type>,
+	...,
+	<namen> <data_type> not null);   
+```
+
+- default constrain:
+  
+```SQL
+CREATE TABLE <your_table> (  
+	<name1> <data_type>,   
+	<name2> <data_type>,  
+	<name3> <data_type>,
+	...,
+	<namen> <data_type> default <default_value>);   
+``` 
+
+- foreign key constrain:
+  
+  constrain from outside table: 
+
+For example:
+
+```C
+--- classes as parent table
+create table classes(
+	id int primary key,
+	name varchar(20)
+);
+
+--- students as child table
+create table students(
+	id int primary key,
+	name varchar(20),
+	class_id int,
+	foreign key(class_id) references classes(id)
+);
+
+insert into classes values(1,'class one');
+insert into classes values(2,'class two');
+insert into classes values(3,'class three');
+insert into classes values(4,'class four');
+
+insert into students values(10001,'Jack',1);
+insert into students values(10002,'Max',2);
+insert into students values(10003,'Henry',3);
+insert into students values(10004,'Tom',4);
+insert into students values(10005,'Jack',3);
+
+```
+
+### Select data from table
+
+- <B>1, Select columns from a table:</B>  
+  `select <coulmn1_name>,<coulmn2_name>... from <table_name>;`
+
+- <B>2, Select columns without duplicate:</B>  
+  `select distinct <column_name> from <table_name>;`
+
+- <B>3, Select columns from a range:</B>  
+  `select * from <table_name> where <column_name> between <range_begin> and <range_end>;`  
+OR `select * from <table_name> where <column_name> > <range_begin> and <column_name> < <range_end>;`.
+
+- <B>4, Select columns without duplicate:</B>    
+  `select distinct <column_name> from <table_name>;`
+
+- <B>5, Select exact element from a column:</B>  
+  `select * from <table_name> where <column_name> in(<elements1>,<elements2>...);` 
+
+- <B>6, 'Or' select distinct elements from two columns:</B>  
+  `select * from <table_name> where <column_name1>=<element1> or <column_name2>=<element2>;`
+
+- <B>7, Select column with descending or ascending order:</B>  
+  descending: `select * from <table_name> order by <column_name> desc;`  
+  ascending: `select * from <table_name> order by <column_name>; ` (default ascending order)
+
+- <B>8, Select column with descending and ascending simultaneously:</B>  
+  `select * from <table_name> by <column_name1> asc,<column_name2> desc;`
+
+- <B>9, Count the number of distinct element in one column  :</B>  
+  `select count(*) from <table_name> where <column_name>=<element>`
+
+- <B>10, Select the maximum element in column:</B>  
+  `select max(<column1>) from <table_name>; `
+
+- <B>11, Group select:
+  `select avg(<column1>) from <table> group by <column2> `
+
+<span style="color:red;"> Nest and combined selection:</span>  
+  `select <column>,<column2>... from <table_name> where <columnN>=(select max(<columnN>) from <table>);`
+
+- <B>12, "having" condition select:</B>  
+  `select <column1> from <table1>`
+
+- <B>15, Select from two tables:</B>  
+  `Select <column1>,<column2>,<coulmn3> from <table1>,<table2> where <table1>.<column4> = <table2>.<column5>;`
+
+- <Span style="color:red;">16, Duplicating table to compare</span>  
+
+- <B>17, Age check:</B>
+  `select year(now)-year(sbirthday) as 'aging' from students;`
+
+
+### join table
+
+- <B>(inner) join:</B>
+
+- <B>left (outer) join:</B>
+If two tables have same values in two columns, it will show the items values. Otherwise it show 'NUll' of other items in left table.
+
+- <B>right (outer) join:</B>
+Similar with left join, but shows all the items in right table.
+
+- <B>full join:</B>
+show all items in both table1 and table2. 
+<span style="color:red">mysql not support full join</span>
+
+
+
+| snum | cnum  | degree |
+|------|-------|--------|
+| 101  | 1-881 |     78 |
+| 101  | 2-105 |     86 |
+| 101  | 3-225 |     69 |
+| 102  | 2-105 |     96 |
+| 102  | 4-901 |     96 |
+| 103  | 3-225 |     81 |
+| 104  | 1-881 |     88 |
+| 105  | 1-881 |     89 |
+| 106  | 1-881 |     99 |
+| 106  | 2-105 |     80 |
+
+
+  `select * from scores a where degree <(select avg(degree) from scores b where a.cnum = b.cnum);`  
+
+### Aggregate function
+
+avg(),maxx(),
+  
+
+- Show all tables  
+show tables;
+
+- show contents in current table:  
+select * from \<your_table\>; (show all contents in the table)
+
+- show the information(data type, structure) of table   
+describe \<your_table\>;
+
+- insert a row of data  
+`insert into <your_table> values('<data>','<data>','<data>'...);` 
+
+
+
+
+## Design pattern
+
+### First normal form (1NF)
+
+1NF design means each column should be the smallest unit which can not be separated.  
+For example:
+`insert into address values(1, ' 1 York Ave Toronto Ontario Canada ')` doesn't fulfill 1NF  
+`insert into address values(1, 1, 'York Ave', 'Toronto', 'Ontario', 'Canada ')` is 1NF.
+
+### Second normal form (2NF)
+
+2NF should fulfill 1NF first then it also need to satisfy that every column should depends on primary key(except primary key)
+
+For example:
+
+```SQL
+create table sale_list(
+	product_id int,
+	customer_id int,
+	product_name varchar(20),
+	customer_name varchar(20),
+	primary key(product_id, customer_id)
+);
+```
+This one above is not qualified with 2NF. Since, the product name is only related to product_id and customer name is only related to customer_id.
+In this case, we need to break 1 table into 3 tables in following way:
+
+```SQL
+create table sale_list(
+	order_id int primary key,
+	product_id int,
+	customer_id int
+);
+
+create table products(
+	id int primary key,
+	product_name varchar(20)
+);
+
+create table customers(
+	id int primary key,
+	custom_name varchar(20)
+);
+```
+
+### Third normal form (3NF)
+
+1. The 3NF should fulfill 2NF first
+2. The column items should not have any relationship between each other(except with primary key)
+
+For example:
+```SQL
+create table myorder(
+	order_id int primary key,
+	product_id int,
+	customer_id int,
+	customer_name varchr(50)
+);
+
+```
+Here customer name have relationship with customer_id, so it can be break int two tables.
+
+```SQL
+create table myorder(
+	order_id int primary key,
+	product_id int,
+	customer_id int,
+);
+
+create table customer(
+	id int primary key,
+	customer_name varchar(50)
+);
+
+```
+
+## Transaction in SQL
+
+Transaction is just 'atomic set' in other programming, like embedded C, which means several operations should be bound together. For example, sending money and receiving money.
+
+### Features of transaction
+
+   - Atomicity − ensures that all operations within the work unit are completed successfully. Otherwise, the transaction is aborted at the point of failure and all the previous operations are rolled back to their former state.
+
+   - Consistency − ensures that the database properly changes states upon a successfully committed transaction.
+
+   - Isolation − enables transactions to operate independently of and transparent to each other.
+
+   - Durability − ensures that the result or effect of a committed transaction persists in case of a system failure.
+
+
+1. The autocommit is enabled by default; and when autocommit is enabled, the `rollback` command is disabled.   
+2. To enable the rollback function, using `set autocommit=0;` 
+3. Also we can use `commit` to manually submit commit.
+
+
+<span style="color:red">Hint:</span> After `commit`, the transaction is also finished. So we cannot use rollback to withdraw.
+
+```SQL
+update user set money=money-100 where name='a';
+update user set money=money+100 where name='b';
+
+```
+
+<B>Manually enable the transaction</B>  
+
+1. Enable the transaction by `begin;`
+2. Enable the transaction by `start transaction;`
+
+### Isolation 
+
+1, Read Uncommitted
+2, Read committed
+3, Repeatable read
+4, Serializable 
+
+Performance: 1>2>3>4
+
+The default isolation level in mysql is (Repeatable read). 
+
+<B>Checking isolation level:</B>  
+`select @@global.transaction_isolation;` Or `select @@transaction_isolation;`
+
+<B>Changing isolation level:</B>  
+set global transaction isolation level read uncommitted;
+
+#### Dirty reads
+A dirty read (aka uncommitted dependency) occurs when a transaction is allowed to read data from a row that has been modified by another running transaction and not yet committed.
+
+
+
+
+## Datatype in SQL
+<div id="anchor_datatype"></div>
+
+
+
+### NUMBER
+
+|  Type |  Length  | Range(sign)  |  Range(unsigned) | Usage  |
+|---|---|---|---|---|
+|TINYINT	  |1 byte	  | (-128，127)   |       (0，255)      |小整数值 |  
+|SMALLINT|	2 bytes	|(-32 768，32 767)|	(0，65 535)	|大整数值 |
+|MEDIUMINT|	3 bytes|	(-8 388 608，8 388 607)|	(0，16 777 215)|	大整数值|
+|INT或INTEGER|	4 bytes|	(-2 147 483 648，2 147 483 647)	|(0，4 294 967 295)	|大整数值|
+|BIGINT|	8 bytes|	(-9,223,372,036,854,775,808，9 223 372 036 854 775 807)|	(0，18 446 744 073 709 551 615)|	极大整数值|
+|FLOAT|	4 bytes|(-3.402 823 466 E+38，-1.175 494 351 E-38)， 0，(1.175 494 351 E-38，3.402 823 466 351 E+38)	|0，(1.175494351 E-38 <br/>，3.402 823 466 E+38)|	单精度浮点数值|
+|DOUBLE	|8 bytes|(-1.797 693 134 862 315 7 E+308，-2.225 073 858 507 201 4 E-308)，0，(2.225 073 858 507 201 4 E-308，1.797 693 134 862 315 7 E+308)	|0，(2.225 073 858 507 201 4 E-308，1.797 693 134 862 315 7 E+308)	|双精度浮点数值|
+|DECIMAL|	对DECIMAL(M,D) ，如果M>D，为M+2否则为D+2|	依赖于M和D的值|	依赖于M和D的值	|小数值| 
+
+
+
+### Time and date
+
+|  Type |  Size(Byte)  | Range  | Format | Usage  |
+|---|---|---|---|---|
+|DATE	|3 |	1000-01-01/9999-12-31|	YYYY-MM-DD|	日期值|
+|TIME	|3 |	'-838:59:59'/'838:59:59'|	HH:MM:SS|	时间值或持续时间|
+|YEAR|	1	|1901/2155|	YYYY|	年份值|
+|DATETIME|	8|	1000-01-01 00:00:00/9999-12-31 23:59:59	|YYYY-MM-DD HH:MM:SS|	混合日期和时间值|
+|TIMESTAMP	|4	|1970-01-01 00:00:00/2038<br/>结束时间是第 2147483647 秒，北京时间 2038-1-19 11:14:07，格林尼治时间 2038年1月19日 凌晨 03:14:07 |YYYYMMDD HHMMSS	|混合日期和时间值，时间戳|
+
+
+
+### Character 
+
+|Type|Size|Description| 
+|---|---|---|
+|CHAR|	0-255 bytes	|定长字符串|
+|VARCHAR|	0-65535 bytes	|变长字符串|
+|TINYBLOB	|0-255 bytes|	不超过 255 个字符的二进制字符串|
+|TINYTEXT|	0-255 bytes	|短文本字符串|
+|BLOB	|0-65 535 bytes	|二进制形式的长文本数据|
+|TEXT	|0-65 535 bytes	|长文本数据|
+|MEDIUMBLOB|	0-16 777 215 bytes|	二进制形式的中等长度文本数据|
+|MEDIUMTEXT	|0-16 777 215 bytes	|中等长度文本数据|
+|LONGBLOB	|0-4 294 967 295 bytes	|二进制形式的极大文本数据|
+|LONGTEXT	|0-4 294 967 295 bytes|	极大文本数据|

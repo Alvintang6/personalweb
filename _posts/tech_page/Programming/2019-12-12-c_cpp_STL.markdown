@@ -1,0 +1,25 @@
+---
+layout: tech_post
+title:  " C++ STL container"
+date:   2019-12-12 11:51:36 -0300
+catalogue: Programming
+tags: C++ 
+description: General used STL in C++
+chinese_link: /chinese/C_Cpp_STL.html
+---
+
+## unordered_map 
+
+
+
+
+## priority_queue
+
+<b> Defination of priority queue: </b>
+#include <queue>
+priority_queue<Type, Container, Functional>
+
+//ascending queue
+priority_queue <int,vector<int>,greater<int> > q;
+//descending queue
+priority_queue <int,vector<int>,less<int> >q;

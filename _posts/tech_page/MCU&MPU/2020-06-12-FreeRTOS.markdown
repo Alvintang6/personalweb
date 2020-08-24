@@ -1,0 +1,135 @@
+---
+layout: tech_post
+title:  "Framework of FreeRTOS"
+date:   2020-06-12 11:51:36 -0300
+catalogue: Mcu&Mpu
+tags: RTOS FreeRTOS 
+description:  Introducing the frameworks and API of FreeRTOS
+---
+* TOC
+{:toc}
+
+## Task
+
+One of the most important purpose that people use 'RTOS' is due to the task management of RTOS. 
+
+### Task Create
+
+In FreeRTOS, we use xTaskCreateStatic(), xTaskCreate() and xTaskCreateRestricted() function to create task.
+The TaskCreateStatic function create task by use static `task heap` which created by programmer manually. Also TaskCreateStatic function need manually create Idling task by creating following function:  
+`vApplicationGetIdleTaskMemory() and vApplicationGetTimerTaskMemory()`
+
+
+#### Create function of a task
+```
+BaseType_t xTaskCreate(
+                    TaskFunction_t   pxTaskCode,
+                    const char * const  pcName,
+                    const uint16_t  usStackDepth,
+                    void * const    pvParameters,
+                    UBaseType_t     uxPriority,
+                    TaskHandle_t *  const pxCreatedTask )
+```
+- pxTaskCode:  the function name of task
+- pName:    The name of task used for debug and tracking.
+- usStackDepth: The size of stack of a task, the real size will be 4 times of `usStackDepth`.
+- pvParameters: Parameters passed to the task.
+- uxPriority: priorities of one task, the value of this property should between 0 and configMAX_PRIORITIES-1.
+- pxCreatedTask: After successful create a task, the function will return this variable as a handle of this task.
+
+#### Delete function of a task
+
+By using Taskhandle, we can delete a task:
+`vTaskDelete( TaskHandle_t xTaskToDelete )`
+
+
+
+
+Example 1. Creating tasks
+This example demonstrates the steps needed to create two simple tasks, then start the tasks
+executing. The tasks simply print out a string periodically, using a crude null loop to create the
+53
+period delay. Both tasks are created at the same priority, and are identical except for the
+string they print out—see Listing 14 and Listing 15 for their respective implementations.
+```c
+void vTask1( void *pvParameters )
+{
+const char *pcTaskName = "Task 1 is running\r\n";
+volatile uint32_t ul; /* volatile to ensure ul is not optimized away. */
+ /* As per most tasks, this task is implemented in an infinite loop. */
+ for( ;; )
+ {
+ /* Print out the name of this task. */
+ vPrintString( pcTaskName );
+ /* Delay for a period. */
+ for( ul = 0; ul < mainDELAY_LOOP_COUNT; ul++ )
+ {
+ /* This loop is just a very crude delay implementation. There is
+ nothing to do in here. Later examples will replace this crude
+ loop with a proper delay/sleep function. */
+ }
+ }
+}
+
+void vTask2( void *pvParameters )
+{
+const char *pcTaskName = "Task 2 is running\r\n";
+volatile uint32_t ul; /* volatile to ensure ul is not optimized away. */
+ /* As per most tasks, this task is implemented in an infinite loop. */
+ for( ;; )
+ {
+ /* Print out the name of this task. */
+ vPrintString( pcTaskName );
+ /* Delay for a period. */
+ for( ul = 0; ul < mainDELAY_LOOP_COUNT; ul++ )
+ {
+ /* This loop is just a very crude delay implementation. There is
+ nothing to do in here. Later examples will replace this crude
+ loop with a proper delay/sleep function. */
+ }
+ }
+}
+
+/*The main() function creates the tasks before starting the scheduler—see Listing 16 for its
+implementation.*/
+
+int main( void )
+{
+ /* Create one of the two tasks. Note that a real application should check
+ the return value of the xTaskCreate() call to ensure the task was created
+ successfully. */
+ xTaskCreate( vTask1,           /* Pointer to the function that implements the task. */
+              "Task 1",/* Text name for the task. This is to facilitate debugging only. */
+              1000, /* Stack depth - small microcontrollers will use much less stack than this. */
+              NULL, /* This example does not use the task parameter. */
+              1, /* This task will run at priority 1. */
+              NULL ); /* This example does not use the task handle. */
+
+ /* Create the other task in exactly the same way and at the same priority. */
+ xTaskCreate( vTask2, "Task 2", 1000, NULL, 1, NULL );
+ /* Start the scheduler so the tasks start executing. */
+ vTaskStartScheduler();
+
+ /* If all is well then main() will never reach here as the scheduler will
+ now be running the tasks. If main() does reach here then it is likely that
+ there was insufficient heap memory available for the idle task to be created.
+ Chapter 2 provides more information on heap memory management. */
+ for( ;; );
+}
+```
+
+
+
+### Task suspend and resume
+
+|||
+|--|--|
+|vTaskSuspend()| Suspend a task|
+|vTaskResume()| Resume a task|
+|xTaskResumeFromISR()| Resume a task from interrupt Service Routine |
+
+By using the following function, the task will be suspended until awakened by vTaskResume function.  
+The task are identified by TaskHandles.
+void vTaskSuspend( TaskHandle_t xTaskToSuspend)
+
+void vTaskResume( TaskHandle_t xTaskToSuspend)

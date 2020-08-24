@@ -1,0 +1,412 @@
+---
+layout: tech_post
+title:  " Socket(TCP/UDP) use note in linux"
+date:   2019-12-12 11:51:36 -0300
+catalogue: Programming
+tags: C TCP 
+description: Notes for TCP and UDP socket programming in linux.
+chinese_link: /chinese/C_TCP.html
+---
+## Socket 
+
+### Structure of sockaddr_in
+
+- in_port_t sin_port 
+- struct in_addr sin_addr 
+- sin_family 
+- sin_len
+
+#### sin_family
+| sin_family | protocol explain  |
+|---|---|
+|AF_INET|	IPv4 protocol|
+|AF_INET6|	IPv6 protocol|
+|AF_LOCAL	|Unix area protocol|
+|AF_ROUTE	|route socket protocol|
+|AF_KEY	|key socket|
+
+#### sin_port
+
+
+#### sin_addr 
+Using inet_addr can transfer the ip address to unsigned long int
+
+a.sin_addr.s_addr = inet_addr("132.241.5.10");
+
+
+
+
+## Processes of using tcp
+
+### Server
+
+1. create socket and assign IP and port
+2. Bind IP and port with socket
+3. Server start up listen process
+4. Accept the connect request from clients( get the socket_fd of clients )
+5. Assign thread resource to each connected clients  
+6. receive from/send to message clients(by clients socket)
+
+### client
+1. create socket and assign IP and port 
+2. Bind IP and port with socket (server ip )
+3. Ask for connect with server
+4. receive or send message
+
+
+
+### code example
+
+Following code gives a example of using tcp framework to connect multi clients.  
+In main function, it initialized server and assign a thread for each client request to connect.   
+The receive function could be varied based on the usage of server. In this program server will answer clients request , send a 10 numbers array and receive changed array as feedback from client. 
+
+The frame message should be defined when transferring some complex information
+
+```c
+#define READ_REQ 1
+#define WRTTO_SERV 2
+#define WRTTO_CLIT 3
+#define CHECKTO_CLIT 4
+ 
+#define MSG_SIZE 10
+
+
+struct msg_frame
+{   
+    uint8_t msg_type;
+    uint8_t client_id;
+    float msg_info[MSG_SIZE];
+};
+```
+
+
+
+
+- server 
+  {% highlight c linenos %}
+ 
+#include <stdio.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <pthread.h>
+#include <sys/types.h>
+#include "msg_frame.h"
+
+
+#define MAX_BUFF 1000      // buffer used for communicate    
+#define PORT 1502
+#define MAX_COUNT 3         // The maximum numbers of clients can be served
+int clients_fd[MAX_COUNT]; 
+pthread_mutex_t mutx;
+int count_clients = 0;
+
+/* maintaining a global array as server infomation */
+float server_nums[MSG_SIZE]={1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
+
+
+
+/* sub-thread used for each clients */
+void *receive(void *index_arg) {                   
+	int ret = 0;
+	int index = *((int *)index_arg);
+	char buff_recv[MAX_BUFF] = {};
+    uint8_t client_id;
+    bool connect_msg = false;
+
+    while(1){
+        if (recv(clients_fd[index], buff_recv, sizeof(buff_recv),0) <= 0) {
+                printf("client[%d] closed now...\n",client_id);
+                count_clients--;
+                close(clients_fd[index]);
+                break;
+            }
+
+
+            struct msg_frame recv_msg;
+            memcpy(&recv_msg,buff_recv,sizeof(recv_msg));
+            if (connect_msg == false)   // first time connect with client save their client ID
+            {
+                client_id = recv_msg.client_id;
+                connect_msg = true;
+            }
+            
+            if (recv_msg.msg_type == READ_REQ){
+                
+
+                struct msg_frame send_msg_t;
+                char buff_send[MAX_BUFF];
+
+                /* send the original array numbers to clients */
+                send_msg_t.msg_type = WRTTO_CLIT;
+                pthread_mutex_lock(&mutx); // use mutex_lock to protect global resource
+                memcpy(send_msg_t.msg_info, server_nums, sizeof(server_nums));
+                pthread_mutex_unlock(&mutx);
+                
+
+                memset(buff_send,0,sizeof(buff_send));
+                memcpy(buff_send,&send_msg_t,sizeof(send_msg_t));
+                send(clients_fd[index], buff_send, sizeof(buff_send),0);
+                printf("Message were sent to the client\n");
+
+
+
+            }else if (recv_msg.msg_type == WRTTO_SERV){
+                /* save the feedback message to the array */
+
+                pthread_mutex_lock(&mutx);              // using mutex to lock shared resource
+                memcpy(server_nums, recv_msg.msg_info, sizeof(server_nums));
+                printf("From client[%d] got array of nums: \n",client_id);
+                for (int i = 0; i < MSG_SIZE; i++)
+                {
+                    printf("%.1f ", server_nums[i]);
+                }
+                pthread_mutex_unlock(&mutx);
+                printf("\n");
+
+                /* Send the received msg back to client  */
+                recv_msg.msg_type = CHECKTO_CLIT;       
+                memcpy(buff_recv,&recv_msg,sizeof(recv_msg));
+                send(clients_fd[index], buff_recv, sizeof(buff_recv),0);
+                printf("A feedback check array was sent to client[%d]\n\n",client_id);
+            }
+    }
+	return NULL;
+}
+
+
+
+
+// Driver function
+int main()
+{
+    char buff[MAX_BUFF];
+    
+    int n;
+    int server_fd, client_fd, len;
+    struct sockaddr_in server, client;
+    pthread_t tpid;
+
+    // socket create and verification
+    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_fd == -1) {
+        printf("socket creation failed...\n");
+        exit(0);
+    }
+    /* Enable address reuse */
+    int on = 1;
+    int ret = setsockopt( server_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on) );
+
+    printf("socket successfully created..\n");
+    bzero(&server, sizeof(server));
+
+    // assign IP, PORT
+    server.sin_family = AF_INET;
+    server.sin_addr.s_addr = htonl(INADDR_ANY);
+    server.sin_port = htons(PORT);
+
+    // binding newly created socket to given IP and verification
+    if ((bind(server_fd, (struct sockaddr*)&server, sizeof(server))) != 0) {
+        printf("socket bind failed...\n");
+        exit(0);
+    }
+
+    printf("socket successfully binded..\n");
+
+    // now server is ready to listen and verification
+    if ((listen(server_fd, 5)) != 0) {
+        printf("Listen failed...\n");
+        exit(0);
+    }
+
+    printf("server listening...\n");
+
+    len = sizeof(client);
+    
+    int index = 0;
+
+    pthread_mutex_init(&mutx, NULL);
+    // infinite loop for chat
+    while(1) {
+        
+        if(count_clients< MAX_COUNT){     // maximum number of clients
+
+            /* accept the client connection and verification */
+            client_fd = accept(server_fd, (struct sockaddr*)&client, &len);
+            if (client_fd < 0) {
+                printf("server acccept failed...\n");
+                exit(0);
+            }
+            printf("server acccept the client...\n");
+            pthread_mutex_lock(&mutx);
+            clients_fd[count_clients++] = client_fd;
+            pthread_mutex_unlock(&mutx);
+            printf("Now server having %d Clients\n ", count_clients);
+
+            index = count_clients-1;
+
+            /* create threads for every client connected */
+             ret = pthread_create(&tpid,NULL, receive, &index);
+            if (ret != 0)
+            {
+                perror(" pthread_create failed\n ");
+                return -1;
+            }
+            pthread_detach(tpid);
+            
+            
+        }
+        
+    }
+
+    // After chatting close the socket
+    close(server_fd);
+    exit(0);
+}
+
+  {% endhighlight %}
+
+
+
+Multi thread is not necessary in client which depends on the task.
+
+{% highlight c linenos %}
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include "msg_frame.h"
+
+#define HOST "127.0.0.1"        
+#define PORT 1502                   // port num of 1502
+#define MAX_BUFF  1000           // 1k buffer zone
+
+
+int main(void)
+{
+    int sockfd, ret;
+    int client_id;
+    struct sockaddr_in server;
+    char buffer[MAX_BUFF];        //using for keep the input message
+    char press_key;
+
+    // create the socket 
+    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        printf("create an endpoint for communication fail!\n");
+        exit(1);
+    }
+
+    bzero(&server, sizeof(server));
+    server.sin_family = AF_INET;
+    server.sin_port = htons(PORT);
+    server.sin_addr.s_addr = inet_addr(HOST);
+
+    // create tcp connection
+    if (connect(sockfd, (struct sockaddr *)&server, sizeof(struct sockaddr)) == -1) {
+        printf("connect server fail...\n");
+        close(sockfd);
+        exit(1);
+    }
+
+    printf("connect server success...\n");
+    printf("please enter the ID[0~255] of this client: \n");
+    fflush(stdin);
+    scanf("%d", &client_id);
+    if(client_id>255 || client_id<0){
+        perror("Client ID should between 0 and 255");
+        close(sockfd);
+        exit(1);
+    }
+    printf("Client:%d \n",client_id);
+
+    while (1) {
+
+        printf("please enter character S/s (send) to send a request to server: \n");
+        getchar();
+        scanf("%c", &press_key);
+
+
+        if (press_key == 's' || press_key == 'S')
+        {
+            printf("\n");
+			/* send the array sending request message to the server */
+            struct msg_frame msg_temp;
+            msg_temp.msg_type = READ_REQ;
+            msg_temp.client_id = client_id;
+            memset(buffer,0,sizeof(buffer));
+            memcpy(buffer,&msg_temp,sizeof(msg_temp));
+            send(sockfd, buffer, sizeof(buffer),0);
+
+
+            memset(buffer,0,sizeof(buffer));
+            recv(sockfd,buffer,sizeof(buffer),0);
+            memcpy(&msg_temp,buffer,sizeof(msg_temp));
+
+			/* processing the array answered from server  */
+            if (msg_temp.msg_type == WRTTO_CLIT)
+            {   
+                float recv_info[MSG_SIZE];
+                memcpy(recv_info,msg_temp.msg_info, sizeof(recv_info));
+
+                printf("From Server got a array of nums: \n");
+                for (int i = 0; i < MSG_SIZE; i++)
+                {
+                    printf("%.1f ", recv_info[i]);
+                }
+                printf("\n");
+                
+
+				/* send the modified array information back to server */
+                printf("The following processed array was sent to the server: \n");
+                for (int i = 0; i < MSG_SIZE; i++)
+                {   
+                    if (i>4)
+                    {
+                        recv_info[i] *=2;
+                    }
+                
+                    printf("%.1f ", recv_info[i]);
+                }
+                printf("\n");
+                msg_temp.msg_type = WRTTO_SERV;
+                memcpy(msg_temp.msg_info, recv_info, sizeof(recv_info));
+                memcpy(buffer,&msg_temp,sizeof(msg_temp));
+                send(sockfd, buffer, sizeof(buffer),0);
+
+            
+				/* receiving the confirmation message from server */
+            recv(sockfd,buffer,sizeof(buffer),0);
+            memcpy(&msg_temp,buffer,sizeof(msg_temp));
+            memcpy(recv_info,msg_temp.msg_info, sizeof(recv_info));
+            if (msg_temp.msg_type == CHECKTO_CLIT){
+                printf("From Server got a feedback array for checking: \n");
+                for (int i = 0; i < MSG_SIZE; i++)
+                {
+                    printf("%.1f ", recv_info[i]);
+                }
+                printf("\n");
+            }
+
+            }
+        }
+
+
+        
+    }
+
+    close(sockfd);
+    exit(0);
+}
+{% endhighlight %}

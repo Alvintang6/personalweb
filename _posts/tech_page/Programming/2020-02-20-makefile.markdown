@@ -1,0 +1,110 @@
+---
+layout: tech_post
+title:  " Makefile"
+date:   2019-12-12 11:51:36 -0300
+catalogue: Programming
+tags: Makefile 
+description: The errors meet in makefile with tips.
+chinese_link: /chinese/makefile.html
+---
+## Table of Content
+* TOC
+{:toc}
+
+
+## A. Tips and errors when using makefile
+
+
+
+### A.1. shell related command (cd)
+
+Every shell based command are only valid in current line. Since each shell command in makefile will call a sub shell.
+For example, `cd` command will only change the path once in this line. So if you do want to use `cd` in makefile you have to combine other command with `&&` or `;`. Like following  
+
+`cd /lib && tar -xvf xxxx.tar or cd /lib; tar -xvf xxxx.tar`
+
+
+### A.2. Bash tips: Colors and formatting
+
+background color:40----49   
+40:black   
+41:dark red   
+42:green   
+43:yellow   
+44:blue   
+45:purple   
+46:dark green   
+47:white  
+
+words color:30-----------39   
+30:black   
+31:red   
+32:green   
+33:yellow   
+34:blue   
+35:purple   
+36:dark green   
+37:white   
+
+===============================================ANSI control code  
+\33[0m default   
+\33[1m enable highlight   
+\33[4m underline   
+\33[5m blink   
+\33[7m reverse   
+\33[8m blanking   
+\33[30m -- \33[37m set front  color   
+\33[40m -- \33[47m set background color   
+\33[nA cursor move up n row  
+\33[nB cursor move down n row   
+\33[nC cursor move right n row   
+\33[nD cursor move left n row  
+\33[y;xH set cursor position  
+\33[2J clear screen   
+\33[K clear contents after cursor   
+\33[s save cursor position   
+\33[u reset cursor position   
+\33[?25l hide cursor   
+\33[?25h show cursor  
+
+example 1:  
+
+`echo -e "\033[41;36m hello world \033[0m"`
+
+example 2: 
+
+```makefile
+CR_GREEN=\033[1;32m
+CR_RESET=\033[0m
+TARGET = main
+@echo "The executable files $(CR_GREEN)$(TARGET)$(CR_RESET) are in $(BUILD_DIR)"
+```
+
+
+### A.3. Pattern-specific Variable
+
+One way to make multi targets is using pattern-specific Variable:  
+For example, we want to generate multi targets which have the same name with source code.
+If we have TARGETS = app1 app2 app3, and SOURCE = app1.c app2.c app3.c.  
+Then $(TARGETS):%:%.c means:  
+
+```
+app1:app1.c
+app2:app2.c
+test:test.c
+```
+The complete is shown in following lines: 
+
+```makefile
+SOURCE = $(wildcard *.c)
+TARGETS = $(patsubst %.c, %, $(SOURCE))
+ 
+CC = gcc
+CFLAGS = -Wall -g
+ 
+all:$(TARGETS)
+ 
+$(TARGETS):%:%.c
+    $(CC) $< $(CFLAGS) -o $@
+ 
+```
